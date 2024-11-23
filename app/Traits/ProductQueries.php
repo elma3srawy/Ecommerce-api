@@ -8,19 +8,19 @@ use Illuminate\Support\Facades\DB;
 trait ProductQueries
 {
 
-    protected function storeProductGetIdQuery($data)
+    protected static function storeProductGetIdQuery($data)
     {
         return  DB::table('products')->insertGetId($data);
     }
-    protected function storeAttributeProductQuery($data)
+    protected static function storeAttributeProductQuery($data)
     {
         DB::table('product_attributes')->insert($data);
     }
-    protected function updateProductQuery($id , $data)
+    protected static function updateProductQuery($id , $data)
     {
         DB::table('products')->where('id' , '=' , $id)->update($data);
     }
-    protected function updateAttributeProductQuery($product_id, $data)
+    protected static function updateAttributeProductQuery($product_id, $data)
     {
         static $hasDeleted = false;
 
@@ -31,11 +31,11 @@ trait ProductQueries
 
         $this->storeAttributeProductQuery($data);
     }
-    private function deleteAttributeProductByProductIdQuery($id)
+    private static function deleteAttributeProductByProductIdQuery($id)
     {
         DB::table('product_attributes')->where('product_id' ,$id)->delete();
     }
-    protected function deleteProductByProductIdQuery($product_id)
+    protected static function deleteProductByProductIdQuery($product_id)
     {
         static $hasDeleted = false;
 
@@ -46,15 +46,15 @@ trait ProductQueries
 
         DB::table('products')->where('id' ,$product_id)->delete();
     }
-    protected function getImageByIdQuery($product_id)
+    protected static function getImageByIdQuery($product_id)
     {
         return DB::table('products')->where('id' , '=' , $product_id)->value('image');
     }
-    protected function changeImageByIdQuery($product_id , $path)
+    protected static function changeImageByIdQuery($product_id , $path)
     {
         return DB::table('products')->where('id' , '=' , $product_id)->update(['image' => $path]);
     }
-    protected function getAllProductsQuery()
+    protected static function getAllProductsQuery()
     {
         return DB::table('products')
         ->leftJoin('product_attributes' , 'products.id' , '=' ,'product_attributes.product_id')
@@ -74,7 +74,7 @@ trait ProductQueries
         )
         ->paginate(PAGINATE);
     }
-    protected function getProductByIdQuery($id)
+    protected static function getProductByIdQuery($id)
     {
         return DB::table('products')
         ->leftJoin('product_attributes' , 'products.id' , '=' ,'product_attributes.product_id')
@@ -95,14 +95,14 @@ trait ProductQueries
         ->where('products.id' , '=' , $id)
         ->first();
     }
-    protected function getPriceByProductIdQuery($product_id)
+    protected static function getPriceByProductIdQuery($product_id)
     {
         return DB::table('products')->where('id' , '=' , $product_id)->value('price');
     }
 
-    protected function getPricingHistoryByProductIdQuery($product_id)
+    protected static function getPricingHistoryByProductIdQuery($product_id)
     {
-       
+
         return DB::table('product_pricing_history')
         ->leftJoin('admins', function ($join) {
             $join->on('product_pricing_history.changeable_id', '=', 'admins.id')
@@ -125,5 +125,15 @@ trait ProductQueries
         )
         ->get();
     }
+
+    public static function decrementProductStockQuantityByProductId($product_id , $amount)
+    {
+        DB::table('products')->where('id' , '=' , $product_id)->decrement('stock_quantity' , $amount);
+    }
+    public static function getQuantityByProductId($product_id)
+    {
+        return DB::table('products')->where('id' , '=' , $product_id)->value('stock_quantity');
+    }
+
 
 }

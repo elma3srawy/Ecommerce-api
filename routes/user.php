@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnsureGuestForAPI;
+use App\Http\Controllers\Orders\OrderController;
 use App\Http\Controllers\Authentication\User\AuthController;
 use App\Http\Controllers\Authentication\VerificationController;
 use App\Http\Controllers\Authentication\User\ResetPasswordController;
@@ -37,11 +38,13 @@ Route::middleware(['auth:sanctum' , 'abilities:user'])->group(function()
 
     Route::middleware( 'verified')->group(function()
     {
-        Route::get('/test' , function(){
-            return 'verified Successfully';
-         });
+        Route::controller(OrderController::class)->group(function(){
+            Route::post('/order/store' , 'store');
+            Route::put('/order/update' , 'update');
+            Route::delete('/order/delete', 'destroy');
+        });
+
     });
 
 
 });
-
