@@ -25,11 +25,11 @@ trait ProductQueries
         static $hasDeleted = false;
 
         if (!$hasDeleted) {
-            $this->deleteAttributeProductByProductIdQuery($product_id);
+            self::deleteAttributeProductByProductIdQuery($product_id);
             $hasDeleted = true;
         }
 
-        $this->storeAttributeProductQuery($data);
+        self::storeAttributeProductQuery($data);
     }
     private static function deleteAttributeProductByProductIdQuery($id)
     {
@@ -40,7 +40,7 @@ trait ProductQueries
         static $hasDeleted = false;
 
         if (!$hasDeleted) {
-            $this->deleteAttributeProductByProductIdQuery($product_id);
+            self::deleteAttributeProductByProductIdQuery($product_id);
             $hasDeleted = true;
         }
 
