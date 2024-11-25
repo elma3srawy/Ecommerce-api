@@ -2,19 +2,20 @@
 
 namespace App\Http\Requests\Orders;
 
-use App\Rules\IsActiveCoupon;
+use App\Traits\OrderQueries;
 use App\Rules\SufficientStock;
-use App\Traits\ProductQueries;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreOrderRequest extends FormRequest
+class UpdateOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        $status = OrderQueries::getColumnByOrderIdQuery($this->input('order_id' ) , 'order_status');
+        return Gate::allows('user-update-order' ,$status);
     }
 
     /**
@@ -25,27 +26,11 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'order_id' => ['required' , 'integer' , 'exists:orders,id'],
             'items' => ['required','array','min:1'],
             'items.*.product_id' => ['required','integer','exists:products,id'],
             'items.*.quantity' => ['required','integer','min:1' ,new SufficientStock()],
             'shipping_address' => ['required','string','max:255'],
-            'code' => ['sometimes' , 'string' , 'max:255' , new IsActiveCoupon($this->getTotalPrice())]
         ];
     }
-
-
-    public function getTotalPrice(): float
-    {
-        return collect($this->input('items'))
-        ->unique(fn($item) => $item['product_id'])
-        ->reduce(function ($total, $item) {
-            return $total + (($item['quantity'] ?? 0) * ($this->getPriceByProductId($item['product_id']) ?? 0));
-        }, 0);
-    }
-
-    public function getPriceByProductId($id):float
-    {
-        return ProductQueries::getPriceByProductIdQuery($id);
-    }
-
 }

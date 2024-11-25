@@ -17,9 +17,11 @@ class ProductStockAdjusted
     /**
      * Create a new event instance.
      */
-    public function __construct(public $product_id , public $quantity)
+    public function __construct(public $product_id , public $quantity ,public $action = 'decrement')
     {
-        //
+        if ($this->action <> 'increment' && $this->action <> 'decrement' ){
+            throw new \InvalidArgumentException("Invalid action: $this->action");
+        }
     }
 
 

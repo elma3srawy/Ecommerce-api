@@ -41,7 +41,7 @@ Route::middleware(['auth:sanctum' , 'abilities:user'])->group(function()
         Route::controller(OrderController::class)->group(function(){
             Route::post('/order/store' , 'store');
             Route::put('/order/update' , 'update');
-            Route::delete('/order/delete', 'destroy');
+            Route::put('/order/cancel', 'cancelOrder');
         });
 
     });

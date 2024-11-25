@@ -130,10 +130,14 @@ trait ProductQueries
     {
         DB::table('products')->where('id' , '=' , $product_id)->decrement('stock_quantity' , $amount);
     }
-    public static function getQuantityByProductId($product_id)
+    public static function IncrementProductStockQuantityByProductId($product_id , $amount)
+    {
+        DB::table('products')->where('id' , '=' , $product_id)->increment('stock_quantity' , $amount);
+    }
+
+    public static function getQuantityByProductIdQuery($product_id)
     {
         return DB::table('products')->where('id' , '=' , $product_id)->value('stock_quantity');
     }
-
 
 }

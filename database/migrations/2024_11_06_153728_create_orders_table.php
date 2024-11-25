@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete()->cascadeOnUpdate();
-            $table->foreignId('coupon_id')->nullable()->constrained('coupons')->nullOnDelete()->nullOnUpdate();
+            $table->foreignId('coupon_id')->nullable()->constrained('coupons')->nullOnDelete()->cascadeOnUpdate();
             $table->enum('order_status', ['pending', 'completed', 'cancelled', 'shipped'])->default('pending');
             $table->decimal('total_price', 10, 2);
             $table->decimal('discounted_price', 10, 2)->nullable();

@@ -3,9 +3,6 @@
 namespace App\Providers;
 
 use Laravel\Sanctum\Sanctum;
-use App\Events\SmsNotification;
-use Illuminate\Support\Facades\Event;
-use App\Listeners\SendSmsNotification;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,9 +25,5 @@ class AppServiceProvider extends ServiceProvider
     {
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
         JsonResource::withoutWrapping();
-        Event::listen(
-            SmsNotification::class,
-            SendSmsNotification::class,
-        );
     }
 }

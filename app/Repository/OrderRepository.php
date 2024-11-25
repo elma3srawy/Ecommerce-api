@@ -4,13 +4,15 @@ namespace App\Repository;
 
 use App\Traits\OrderQueries;
 use App\Events\CouponApplied;
+use App\Traits\CouponQueries;
 use App\Events\ProductStockAdjusted;
 use Illuminate\Support\Facades\Auth;
 use App\Interfaces\Repository\OrderRepositoryInterface;
+use App\Traits\ProductQueries;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-    use OrderQueries;
+    use OrderQueries , CouponQueries , ProductQueries;
 
     private $auth;
     private \Carbon\Carbon $now;
@@ -19,12 +21,12 @@ class OrderRepository implements OrderRepositoryInterface
         $this->now = now();
         $this->auth = Auth::user();
     }
-    public function store($validate)
+    public function store($validated)
     {
-        $data = collect($validate)
-        ->when(isset($validate['code']), function ($collection) {
+        $data = collect($validated)
+        ->when(isset($validated['code']), function ($collection) {
             return $collection
-            ->put('coupon_id', $this->getCouponIdByCode($collection->get('code')))
+            ->put('coupon_id', $this->getCouponIdByCodeQuery($collection->get('code')))
             ->except('code');
         })
         ->except('items')
@@ -33,7 +35,7 @@ class OrderRepository implements OrderRepositoryInterface
 
         $order_id = $this->storeOrderGetIdQuery($data->all());
 
-        $items = collect( $validate['items']);
+        $items = collect( $validated['items']);
 
         $this->storeOrderItems($order_id , $items);
 
@@ -50,7 +52,7 @@ class OrderRepository implements OrderRepositoryInterface
         ->unique(fn($item) => $item['product_id'])
         ->each(function($item) use ($order_id){
             $item['order_id'] = $order_id;
-            $item['price'] = (float) $this->getPriceByProductId($item['product_id']) * $item['quantity'];
+            $item['price'] = (float) $this->getPriceByProductIdQuery($item['product_id']) * $item['quantity'];
             $item['created_at'] = $this->now;
 
             $this->storeOrderItemsQuery($item);
@@ -58,13 +60,29 @@ class OrderRepository implements OrderRepositoryInterface
             event(new ProductStockAdjusted($item['product_id'], $item['quantity']));
         });
     }
-    public function update($validate)
+    public function update($validated)
+    {
+        $order_id = $validated['order_id'];
+
+        $this->getOrderItemsByOrderIdQuery($order_id)
+        ->each(function($item){
+            event(new ProductStockAdjusted($item->product_id, $item->quantity, 'increment'));
+        });
+
+        $this->deleteOrderItemsByOrderIdQuery($order_id);
+
+        $this->storeOrderItems($order_id , $validated['items']);
+
+        $this->updateOrderByOrderIdQuery($order_id, ['shipping_address' => $validated['shipping_address']]);
+    }
+
+    public function delete($order_id)
     {
 
     }
-    public function delete($validated)
+    public function cancelOrder($order_id)
     {
-
+        $this->updateStatusOrderByOrderIdQuery($order_id , 'cancelled');
     }
 
 

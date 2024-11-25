@@ -22,7 +22,11 @@ class StockQuantityHandler
      * Handle the event.
      */
     public function handle(ProductStockAdjusted $event): void
-    {
-        ProductQueries::decrementProductStockQuantityByProductId($event->product_id ,$event->quantity);
+    {   if($event->action === 'increment')
+        {
+            ProductQueries::IncrementProductStockQuantityByProductId($event->product_id ,$event->quantity);
+        }else{
+            ProductQueries::decrementProductStockQuantityByProductId($event->product_id ,$event->quantity);
+        }
     }
 }

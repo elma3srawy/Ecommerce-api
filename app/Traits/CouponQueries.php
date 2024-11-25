@@ -36,4 +36,9 @@ trait CouponQueries
     {
         return DB::table('coupons')->where('id' ,'=' , $coupon_id)->first($columns);
     }
+
+    protected static function getCouponIdByCodeQuery($code)
+    {
+        return  DB::table('coupons')->where('code' , '=' , $code)->value("id");
+    }
 }
