@@ -22,16 +22,18 @@ class IsActiveCoupon implements ValidationRule
     {
         $coupon = $this->getCouponByCode($value);
 
+
         if (!$coupon) {
             $fail('The coupon does not exist.');
             return;
         }
+
         if (!(
             $coupon->is_active &&                             // Must be active
             $coupon->end_date > now() &&                      // Must not be expired
             $coupon->usage_limit > $coupon->usage_count &&    // Must not exceed usage limit
             $this->totalValue >= $coupon->minimum_order_value // Must meet minimum order value
-        )) {
+            )) {
             $fail('The coupon is not valid for use.');
         }
     }

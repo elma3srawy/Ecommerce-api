@@ -10,17 +10,15 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CouponApplied
+class OrderStatusChanged
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public $coupon_id , public $order_id)
+    public function __construct(public $order_id , public $status)
     {
-        
     }
-
 
 }

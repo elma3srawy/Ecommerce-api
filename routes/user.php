@@ -33,7 +33,7 @@ Route::middleware(['auth:sanctum' , 'abilities:user'])->group(function()
 
     Route::middleware('throttle:10,5')->controller(VerificationController::class)->group(function(){
         Route::post('/send-notification' , 'sendNotification');
-        Route::post('/verify-email/{token}' , 'verify');
+        Route::post('/verify-phone-number/{code}' , 'verify');
     });
 
     Route::middleware( 'verified')->group(function()

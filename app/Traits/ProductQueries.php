@@ -95,7 +95,7 @@ trait ProductQueries
         ->where('products.id' , '=' , $id)
         ->first();
     }
-    protected static function getPriceByProductIdQuery($product_id)
+    public static function getPriceByProductIdQuery($product_id)
     {
         return DB::table('products')->where('id' , '=' , $product_id)->value('price');
     }

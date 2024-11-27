@@ -27,7 +27,6 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products')->restrictOnDelete()->cascadeOnUpdate();
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
-            $table->timestamps();
         });
         Schema::create('order_status_history', function (Blueprint $table) {
             $table->id();
@@ -35,7 +34,6 @@ return new class extends Migration
             $table->enum('status', ['pending', 'completed', 'cancelled', 'shipped']);
             $table->morphs('changeable');
             $table->timestamp('changed_at');
-            $table->timestamps();
         });
 
     }

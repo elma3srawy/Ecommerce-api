@@ -9,11 +9,11 @@ use App\Http\Requests\Orders\StoreOrderRequest;
 use App\Http\Requests\Orders\CancelOrderRequest;
 use App\Http\Requests\Orders\UpdateOrderRequest;
 use App\Interfaces\Repository\OrderRepositoryInterface;
-
+use App\Traits\OrderMethods;
 
 class OrderController extends Controller
 {
-    use ResponseTrait;
+    use ResponseTrait , OrderMethods;
     public function __construct(private OrderRepositoryInterface $order)
     {
 
@@ -41,7 +41,6 @@ class OrderController extends Controller
 
         $validated = $request->validated();
 
-        DB::beginTransaction();
         try {
 
             $this->order->update($validated);
@@ -63,7 +62,15 @@ class OrderController extends Controller
 
     public function cancelOrder(CancelOrderRequest $request)
     {
-        $this->order->cancelOrder($request->validated());
-        return  $this->successResponse(message:'Order cancelled successfully');
+        try {
+            $this->order->cancelOrder($request->validated('order_id'));
+            DB::commit();
+            return  $this->successResponse(message:'Order cancelled successfully');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $this->errorResponse(message: 'Error Cancel order: ' . $e->getMessage());
+        }
     }
+
+
 }

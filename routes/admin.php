@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnsureGuestForAPI;
+use App\Http\Controllers\Orders\OrderController;
 use App\Http\Controllers\Coupons\CouponController;
 use App\Http\Controllers\Products\ProductController;
 use App\Http\Controllers\Coupons\CouponUserController;
@@ -72,6 +73,13 @@ Route::middleware(['auth:sanctum' , 'abilities:admin'])->group(function()
             Route::delete('/coupon/users/delete' , 'destroy');
             Route::get('/coupon/users/get-all' , 'getAllCouponUsers');
             Route::get('/coupon/{coupon_id}/users/' , 'getCouponUserByCouponId');
+        });
+
+        Route::controller(OrderController::class)->group(function(){
+            Route::put('/order/change/status' , 'changeStatus');
+            Route::get('/order/all' , 'getAllOrders');
+            Route::get('/order/status/{status}' , 'getOrdersByStatus');
+            Route::get('/order/date/{startDate}/{endDate}' , 'getOrdersByDateRange');
         });
 
     });

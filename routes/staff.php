@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnsureGuestForAPI;
+use App\Http\Controllers\Orders\OrderController;
 use App\Http\Controllers\Products\ProductController;
 use App\Http\Controllers\Authentication\Staff\AuthController;
 use App\Http\Controllers\Authentication\VerificationController;
@@ -45,6 +46,13 @@ Route::middleware(['auth:sanctum' , 'abilities:staff'])->group(function()
             Route::get('/product/get/{id}' , 'getProductById');
             Route::put('/product/change-price' , 'changePrice');
             Route::post('/product/change-image' , 'changeImage');
+        });
+
+        Route::controller(OrderController::class)->group(function(){
+            Route::put('/order/change/status' , 'changeStatus');
+            Route::get('/order/all' , 'getAllOrders');
+            Route::get('/order/status/{status}' , 'getOrdersByStatus');
+            Route::get('/order/date/{startDate}/{endDate}' , 'getOrdersByDateRange');
         });
     });
 
