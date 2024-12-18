@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Orders;
 
 use App\Rules\IsActiveCoupon;
+use App\Rules\IsActiveProduct;
 use App\Rules\SufficientStock;
 use App\Traits\ProductQueries;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,7 +27,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'items' => ['required','array','min:1'],
-            'items.*.product_id' => ['required','integer','exists:products,id'],
+            'items.*.product_id' => ['required','integer','exists:products,id', new IsActiveProduct()],
             'items.*.quantity' => ['required','integer','min:1' ,new SufficientStock()],
             'shipping_address' => ['required','string','max:255'],
             'code' => ['sometimes' , 'string' , 'max:255' , new IsActiveCoupon($this->getTotalPrice())]

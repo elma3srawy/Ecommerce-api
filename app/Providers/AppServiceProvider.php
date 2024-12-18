@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Laravel\Cashier\Cashier;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -25,5 +27,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
         JsonResource::withoutWrapping();
+        Cashier::useCustomerModel(User::class);
     }
 }

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->integer('stock_quantity')->default(0);
             $table->string('image')->nullable();
+            $table->string('stripe_product_id')->nullable();
+            $table->string('stripe_price_id')->nullable();
             $table->timestamps();
         });
         Schema::create('product_attributes', function (Blueprint $table) {

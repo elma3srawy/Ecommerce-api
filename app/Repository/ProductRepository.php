@@ -3,13 +3,15 @@
 namespace App\Repository;
 
 use Carbon\Carbon;
+use App\Models\Product;
 use App\Traits\FileManager;
 use Illuminate\Http\Request;
+use App\Events\ProductCreated;
 use App\Traits\ProductQueries;
 use App\Events\ProductPriceChanged;
-use App\Http\Resources\Products\ProductPricingHistoryResource;
 use App\Http\Resources\Products\ProductResource;
 use App\Interfaces\Repository\ProductRepositoryInterface;
+use App\Http\Resources\Products\ProductPricingHistoryResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProductRepository implements ProductRepositoryInterface
@@ -38,8 +40,9 @@ class ProductRepository implements ProductRepositoryInterface
 
         $id = $this->storeProductGetIdQuery($product->toArray());
 
-       $this->storeAttributeProduct($id , $data);
-
+        $this->storeAttributeProduct($id , $data);
+        
+        event(new ProductCreated(Product::find($id)));
     }
     private function storeAttributeProduct($id, $data)
     {

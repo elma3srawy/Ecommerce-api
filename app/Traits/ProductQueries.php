@@ -95,6 +95,25 @@ trait ProductQueries
         ->where('products.id' , '=' , $id)
         ->first();
     }
+    public static function getActiveProductByIdQuery(int $id)
+    {
+        return DB::table('products')
+        ->leftJoin('product_attributes' , 'products.id' , '=' ,'product_attributes.product_id')
+        ->leftJoin('categories' , 'products.category_id' , '=' ,'categories.id')
+        ->where('categories.status' , '=' , 1)
+        ->groupBy('products.id', 'price' , 'description', 'stock_quantity','products.image','name' ,'categories.name','categories.status')
+        ->select(
+            'products.id As id',
+            'products.name',
+            'products.description',
+            'products.price',
+            DB::raw("GROUP_CONCAT(attribute_name) as attribute_names"),
+            DB::raw("GROUP_CONCAT(attribute_value) as attribute_values"),
+            'image',
+        )
+        ->where('products.id' , $id)
+        ->first();
+    }
     public static function getPriceByProductIdQuery($product_id)
     {
         return DB::table('products')->where('id' , '=' , $product_id)->value('price');

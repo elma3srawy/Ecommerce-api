@@ -107,6 +107,13 @@ trait OrderQueries
         ->paginate(PAGINATE);
     }
 
-
+    public static function getOrderPaymentByOrderIdQuery(int $order_id)
+    {
+        return  DB::table('Order_items')
+        ->rightJoin('products' , 'order_items.product_id' , '=' , 'products.id')
+        ->where('order_id' , '=' , $order_id)
+        ->select('order_items.quantity' , 'stripe_price_id')
+        ->get();
+    }   
 }
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\GenerateToken;
+use Laravel\Cashier\Billable;
 use App\Events\SmsNotification;
 use App\Jobs\SendSmsNotification;
 use App\Traits\MustVerifyMobile ;
@@ -16,7 +17,12 @@ use App\Interfaces\Authentication\MustVerifyMobile as VerifyMobileInterface;
 class User extends Authenticatable implements VerifyMobileInterface
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use  HasApiTokens, HasFactory, Notifiable , MustVerifyMobile , GenerateToken;
+    use  HasApiTokens,
+    HasFactory,
+    Notifiable ,
+    MustVerifyMobile ,
+    GenerateToken,
+    Billable;
 
     /**
      * The attributes that are mass assignable.

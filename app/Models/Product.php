@@ -16,6 +16,8 @@ class Product extends Model
         'price',
         'stock_quantity',
         'image',
+        'stripe_product_id',
+        'stripe_price_id',
     ];
 
     public function attributes()

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnsureGuestForAPI;
 use App\Http\Controllers\Orders\OrderController;
 use App\Http\Controllers\Coupons\CouponController;
+use App\Http\Controllers\Supports\TicketController;
 use App\Http\Controllers\Products\ProductController;
 use App\Http\Controllers\Coupons\CouponUserController;
 use App\Http\Controllers\Categories\CategoryController;
@@ -80,6 +81,10 @@ Route::middleware(['auth:sanctum' , 'abilities:admin'])->group(function()
             Route::get('/order/all' , 'getAllOrders');
             Route::get('/order/status/{status}' , 'getOrdersByStatus');
             Route::get('/order/date/{startDate}/{endDate}' , 'getOrdersByDateRange');
+        });
+
+        Route::controller(TicketController::class)->group(function(){
+            Route::put('/support/ticket/change/status' , 'update');
         });
 
     });
